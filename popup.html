@@ -127,6 +127,14 @@
       font-size: 14px;
       color: #7c4dff;
     }
+    .ratio-text span {
+      display: block;
+    }
+    #leverage-text {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
     .divider {
       position: relative;
       height: 20px;
@@ -202,7 +210,7 @@
       align-items: center;
     }
     .position-row-label {
-      min-width: 60px;
+      min-width: 40px;
       font-size: 13px;
       font-weight: 500;
       color: #555;
@@ -219,6 +227,7 @@
       border: 1px solid #ddd;
       font-size: 14px;
       width: calc(50% - 8px);
+      margin-right: 4px;
     }
     .position-input:focus {
       outline: none;
@@ -239,10 +248,10 @@
       margin-left: auto;
     }
     .remove-position {
-      width: 28px;
-      height: 28px;
-      background-color: #ff3b30;
-      color: white;
+      width: 10px;
+      height: 10px;
+      background-color: transparent;
+      color: #ff3b30;
       border: none;
       border-radius: 50%;
       display: flex;
@@ -250,6 +259,7 @@
       justify-content: center;
       font-size: 16px;
       cursor: pointer;
+      margin-right: 0;
     }
     .positions-header {
       display: flex;
@@ -297,8 +307,8 @@
       </div>
       
       <div class="slider-container">
-        <input type="range" min="0" max="100" value="0" class="slider" id="balance-slider">
-        <div class="ratio-text" id="ratio-text">0% Balance/Position Ratio</div>
+        <input type="range" min="1" max="100" value="1" class="slider" disabled id="balance-slider">
+        <div class="ratio-text" id="ratio-text">1x Leverage</div>
       </div>
       
       <div class="input-field">
@@ -329,7 +339,7 @@
       <div class="formula-title">Formula:</div>
       <div class="formula-line">&#8901; Long: Entry Price &#215; (1 - Balance &divide; Position Size)</div>
       <div class="formula-line">&#8901; Short: Entry Price &#215; (1 + Balance &divide; Position Size)</div>
-      <div class="formula-line">&#8901; Multiple positions: Calculate weighted average and apply the formula</div>
+      <div class="formula-line">&#8901; Multiple positions: First calculate weighted average entry price, then apply formula</div>
     </div>
   </div>
   
