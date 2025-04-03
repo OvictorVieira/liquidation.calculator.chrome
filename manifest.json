@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Quantifury Liquidation Calculator",
+  "name": "Liquidation Price Calculator",
   "version": "1.0",
   "description": "Calculate liquidation prices for positions on Quantifury",
   "action": {
