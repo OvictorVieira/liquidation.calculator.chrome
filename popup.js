@@ -15,11 +15,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const newPosition = document.createElement('div');
     newPosition.className = 'position-row';
     newPosition.innerHTML = `
+      <button class="remove-position">&#215;</button>
       <div class="position-row-label">Order ${positionCount}</div>
       <div class="position-field">
         <input type="number" min="0" class="position-input entry-price" placeholder="Entry Price">
         <input type="number" min="0" class="position-input position-size" placeholder="Size">
-        <button class="remove-position">×</button>
       </div>
     `;
     
@@ -50,14 +50,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const accountBalanceInput = document.getElementById('account-balance');
   
   balanceSlider.addEventListener('input', function() {
-    const ratio = this.value;
-    ratioText.textContent = `${ratio}% Balance/Position Ratio`;
+    const leverage = this.value;
+    ratioText.textContent = `${leverage}x Leverage`;
     
     // Calculate total position size
     const totalPositionSize = calculateTotalPositionSize();
     
     if (totalPositionSize > 0) {
-      const balance = (totalPositionSize * ratio / 100).toFixed(2);
+      // Balance = Position Size / Leverage
+      const balance = (totalPositionSize / leverage).toFixed(2);
       accountBalanceInput.value = balance;
     }
   });
@@ -78,10 +79,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalPositionSize = calculateTotalPositionSize();
     const accountBalance = parseFloat(accountBalanceInput.value);
     
-    if (!isNaN(accountBalance) && totalPositionSize > 0) {
-      const ratio = (accountBalance / totalPositionSize * 100).toFixed(2);
-      balanceSlider.value = ratio;
-      ratioText.textContent = `${ratio}% Balance/Position Ratio`;
+    if (!isNaN(accountBalance) && totalPositionSize > 0 && accountBalance > 0) {
+      // Leverage = Position Size / Balance
+      const leverage = Math.round(totalPositionSize / accountBalance);
+      balanceSlider.value = leverage;
+      ratioText.textContent = `${leverage}x Leverage`;
     }
   }
   
