@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // Function to update position labels when a position is removed
   function updatePositionLabels() {
     const positionRows = document.querySelectorAll('.position-row');
     positionCount = positionRows.length;
@@ -52,23 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
   balanceSlider.addEventListener('input', function() {
     const leverage = this.value;
     ratioText.textContent = `${leverage}x Leverage`;
-    
-    // Calculate total position size
-    const totalPositionSize = calculateTotalPositionSize();
-    
-    if (totalPositionSize > 0) {
-      // Balance = Position Size / Leverage
-      const balance = (totalPositionSize / leverage).toFixed(2);
-      accountBalanceInput.value = balance;
-    }
+    updateBalanceRatio();
   });
   
-  // Update slider when account balance changes
   accountBalanceInput.addEventListener('input', function() {
     updateBalanceRatio();
   });
   
-  // Add event delegation for position inputs
   positionsList.addEventListener('input', function(e) {
     if (e.target.classList.contains('position-size')) {
       updateBalanceRatio();
@@ -80,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const accountBalance = parseFloat(accountBalanceInput.value);
     
     if (!isNaN(accountBalance) && totalPositionSize > 0 && accountBalance > 0) {
-      // Leverage = Position Size / Balance
       const leverage = Math.round(totalPositionSize / accountBalance);
       balanceSlider.value = leverage;
       ratioText.textContent = `${leverage}x Leverage`;
@@ -100,21 +88,28 @@ document.addEventListener('DOMContentLoaded', function() {
     
     return totalSize;
   }
-  
+
+  // Maintenance Margin per Leverage Level
+  function getMaintenanceMargin(leverage) {
+    if (leverage > 50) return 0.05;
+    if (leverage > 25) return 0.025;
+    if (leverage > 10) return 0.01;
+    return 0.005;
+  }
+
   // Calculate button
   const calculateBtn = document.getElementById('calculate-btn');
   
   calculateBtn.addEventListener('click', function() {
-    // Get position type
     const positionType = document.getElementById('position-type').value;
     const accountBalance = parseFloat(accountBalanceInput.value);
+    const leverage = parseFloat(balanceSlider.value);
     
     if (isNaN(accountBalance)) {
       alert('Please enter a valid account balance');
       return;
     }
     
-    // Get all positions
     const positions = [];
     const entryPriceInputs = document.querySelectorAll('.entry-price');
     const positionSizeInputs = document.querySelectorAll('.position-size');
@@ -136,7 +131,6 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
     
-    // Calculate weighted average entry price
     let totalWeightedPrice = 0;
     let totalPositionSize = 0;
     
@@ -146,22 +140,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     const avgEntryPrice = totalWeightedPrice / totalPositionSize;
+    const maintenanceMargin = getMaintenanceMargin(leverage);
     
-    // Calculate liquidation price
     let liquidationPrice;
     
     if (positionType === 'long') {
-      liquidationPrice = avgEntryPrice * (1 - accountBalance / totalPositionSize);
-    } else { // short
-      liquidationPrice = avgEntryPrice * (1 + accountBalance / totalPositionSize);
+      liquidationPrice = avgEntryPrice * (1 - (accountBalance / totalPositionSize) + maintenanceMargin);
+    } else {
+      liquidationPrice = avgEntryPrice * (1 + (accountBalance / totalPositionSize) - maintenanceMargin);
     }
     
-    // Display results
     document.getElementById('liquidation-price').textContent = '$' + liquidationPrice.toFixed(2);
     document.getElementById('avg-entry-price').textContent = '$' + avgEntryPrice.toFixed(2);
     document.getElementById('total-position-size').textContent = '$' + totalPositionSize.toFixed(2);
     
-    // Show result container
     document.getElementById('result-container').classList.add('result-visible');
   });
 });
