@@ -77,7 +77,6 @@
       width: 24px;
       height: 24px;
       border-radius: 50%;
-      margin-right: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -99,6 +98,56 @@
     }
     .input-amount:focus {
       outline: none;
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+    }
+    .info-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #3478F6;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: #555;
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 12px;
+      font-weight: normal;
+    }
+    .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #555 transparent transparent transparent;
+    }
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
     }
     .slider-container {
       padding: 0 12px;
@@ -297,10 +346,10 @@
       
       <div class="positions-container" id="positions-list">
         <div class="position-row">
-          <div class="position-row-label">Order 1</div>
+          <div class="input-icon" style="background-color: #cccccc;">1</div>
           <div class="position-field">
             <input type="number" min="0" class="position-input entry-price" placeholder="Entry Price">
-            <input type="number" min="0" class="position-input position-size" placeholder="Size">
+            <input type="number" min="0" class="position-input position-size" placeholder="Position Size">
           </div>
           <!-- First position doesn't have a remove button -->
         </div>
@@ -312,8 +361,14 @@
       </div>
       
       <div class="input-field">
-        <div class="input-icon" style="background-color: #ffcc00;">B</div>
-        <div class="input-label">Account Balance</div>
+        <div class="input-icon" style="background-color: #f8e300; margin-right: 12px;">$</div>
+        <div class="input-label">
+          Total Account Balance
+          <div class="tooltip">
+            <div class="info-icon">i</div>
+            <span class="tooltip-text">Enter your total account balance in USD. This is the amount of funds you have in your trade account.</span>
+          </div>
+        </div>
         <input type="number" id="account-balance" class="input-amount" placeholder="0">
       </div>
     </div>

@@ -5,21 +5,47 @@ document.addEventListener('DOMContentLoaded', function() {
     window.close();
   });
   
+  // Colors for position types
+  const LONG_COLOR = '#4cd964'; // Green for Long
+  const SHORT_COLOR = '#ff3b30'; // Red for Short
+  
+  // Position type select
+  const positionTypeSelect = document.getElementById('position-type');
+  
+  // Update all position icons when position type changes
+  positionTypeSelect.addEventListener('change', updatePositionIcons);
+  
+  function updatePositionIcons() {
+    const positionType = positionTypeSelect.value;
+    const iconColor = positionType === 'long' ? LONG_COLOR : SHORT_COLOR;
+    const positionIcons = document.querySelectorAll('#positions-list .input-icon');
+    
+    positionIcons.forEach(icon => {
+      icon.style.backgroundColor = iconColor;
+    });
+  }
+  
   // Add position button
   const addPositionBtn = document.getElementById('add-position');
   const positionsList = document.getElementById('positions-list');
   let positionCount = 1;
   
+  // Initialize the first position icon color
+  updatePositionIcons();
+  
   addPositionBtn.addEventListener('click', function() {
     positionCount++;
+    const positionType = positionTypeSelect.value;
+    const iconColor = positionType === 'long' ? LONG_COLOR : SHORT_COLOR;
+    
     const newPosition = document.createElement('div');
     newPosition.className = 'position-row';
     newPosition.innerHTML = `
       <button class="remove-position">&#215;</button>
-      <div class="position-row-label">Order ${positionCount}</div>
+      <div class="input-icon" style="background-color: ${iconColor};">${positionCount}</div>
       <div class="position-field">
         <input type="number" min="0" class="position-input entry-price" placeholder="Entry Price">
-        <input type="number" min="0" class="position-input position-size" placeholder="Size">
+        <input type="number" min="0" class="position-input position-size" placeholder="Position Size">
       </div>
     `;
     
@@ -139,6 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
       totalPositionSize += position.positionSize;
     });
     
+    // Calculate weighted average based on position sizes
     const avgEntryPrice = totalWeightedPrice / totalPositionSize;
     const maintenanceMargin = getMaintenanceMargin(leverage);
     
